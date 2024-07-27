@@ -1,6 +1,18 @@
 "use client";
-import { ResponsiveBump } from "@nivo/bump";
-import { Card, CardContent } from "@/components/ui/card";
+
+import dynamic from "next/dynamic";
+const ResponsiveBump = dynamic(
+  () => import("@nivo/bump").then((mod) => mod.ResponsiveBump),
+  { ssr: false }
+);
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useEffect, useState } from "react";
 
 const MyResponsiveBump = (props: any) => {
   return (
@@ -40,19 +52,23 @@ const MyResponsiveBump = (props: any) => {
       axisLeft={{
         tickSize: 5,
         tickPadding: 5,
+        legend: "",
         tickRotation: 0,
-        legend: "ranking",
         legendPosition: "middle",
-        legendOffset: -40,
         truncateTickAt: 0,
       }}
-      margin={{ top: 40, right: 100, bottom: 40, left: 60 }}
+      margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
       axisRight={null}
     />
   );
 };
 
 export default function General() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
   const data = [
     {
       id: "Serie 1",
@@ -356,8 +372,14 @@ export default function General() {
     },
   ];
   return (
-    <Card className="w-full h-[400px]">
-      <MyResponsiveBump data={data} />
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Weekly</CardTitle>
+        <CardDescription>This Week</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4 h-[400px]">
+        {isLoading ? <div>Loading...</div> : <MyResponsiveBump data={data} />}
+      </CardContent>
     </Card>
   );
 }
